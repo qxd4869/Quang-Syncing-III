@@ -126,7 +126,6 @@ var init = function init() {
 };
 
 window.onload = init;
-"use strict";
 'use strict';
 
 //when we receive a character update

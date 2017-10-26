@@ -1,7 +1,8 @@
 // fast hashing library
 const xxh = require('xxhashjs');
 const Character = require('./Character.js');
-const physics = require('./physics.js');
+
+
 const characters = {};
 
 // our socketio instance
@@ -30,9 +31,24 @@ const setupSockets = (ioServer) => {
 
     // when this user sends the server a movement update
     socket.on('movementUpdate', (data) => {
-      
-      physics.gravityFall(data);
+      let gravSpeed = data.gravitySpeed;
+      // get curr Y pos
+      let deY = data.destY;
+
+      let mDown = data.moveDown;
+
+      if (data.moveDown || data.destY < 378) {
+        gravSpeed += data.gravity;
+        deY += data.speedY + data.gravitySpeed;
+      }
+      if (data.destY >= 378) {
+        mDown = false;
+      }
+
       characters[socket.hash] = data;
+      characters[socket.hash].destY = deY;
+      characters[socket.hash].moveDown = mDown;
+      characters[socket.hash].gravitySpeed = gravSpeed;
 
       // update the timestamp of the last change for this character
       characters[socket.hash].lastUpdate = new Date().getTime();
